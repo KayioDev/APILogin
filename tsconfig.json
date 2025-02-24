@@ -4,6 +4,11 @@
         "module": "CommonJS",
         "target": "ES2024",
         "esModuleInterop": true,
-        "allowJs": true
-    }
+        "allowJs": true,
+        "strict": true,  // Reforça regras do TypeScript
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
 }
