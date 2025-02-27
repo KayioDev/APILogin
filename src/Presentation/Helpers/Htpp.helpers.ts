@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse } from "../Protocolos/https"
+import { HttpRequest, HttpResponse } from "../Protocolos/Https"
 
 export const BadRequest = (error: Error): HttpResponse=> 
     {
@@ -6,4 +6,8 @@ export const BadRequest = (error: Error): HttpResponse=>
             statusCode: 400,
             body: error
         }
+    }
+export const Sucesso = () : HttpResponse =>
+    {
+        return { statusCode: 200, body: { message: "Sucesso" } };
     }
