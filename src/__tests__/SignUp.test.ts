@@ -159,7 +159,7 @@ describe ('SignupController', ()=>{
 
     })
 
-    test('Garantir que retorne 500 se não ocorrer algum erro no servidor', ()=>{
+    test('Garantir que retorne 500 se ocorrer algum erro no servidor', ()=>{
         const emailValidatorStub = MakeEmailValidatorWithTrhow()
         const addAccountStub = MakeAddAccount();
         const sut = new SignupController(emailValidatorStub,addAccountStub)
@@ -177,8 +177,10 @@ describe ('SignupController', ()=>{
         expect(httResponse.statusCode).toBe(500);
         expect(httResponse.body).toEqual(new ServerError());
     })
+    
 
-    test('Garantir que retorne 400 se a confirmação de senha estiver errada', ()=>{
+
+    test('Garantir que retorne 400 se a confirmação de senha for invalida', ()=>{
         const {sut} = MakeSut();
         const httpRequest = 
         {
@@ -192,7 +194,7 @@ describe ('SignupController', ()=>{
         }
         const httResponse = sut.handle(httpRequest);
         expect(httResponse.statusCode).toBe(400);
-        expect(httResponse.body).toEqual(new InvalidError('confirmSenha'))
+        expect(httResponse.body).toEqual(new InvalidParamError('confirmSenha'))
     })
 
     test('Garantir que e AddAccount, seja chamado ', ()=>{
@@ -205,7 +207,7 @@ describe ('SignupController', ()=>{
                 nome: 'any_nome',
                 email: 'any_email',
                 senha: 'any_senha',
-                confirmSenha: 'any_confirmSenha'
+                confirmSenha: 'any_senha'
             }
         }
         sut.handle(httpRequest);
