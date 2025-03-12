@@ -10,8 +10,9 @@ export const BadRequest = (error: Error): HttpResponse=>
     }
 export const Sucesso = () : HttpResponse =>
     {
-        return { statusCode: 200,
-             body: { message: "Sucesso" } };
+        return { 
+            statusCode: 200,
+            body: { message: "Sucesso" } };
     }
 
 export const serverError = (): HttpResponse=> 
