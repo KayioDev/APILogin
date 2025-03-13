@@ -12,7 +12,7 @@ export class SignupController implements Controllers {
         this.addAccount = addAccount;
     }
 
-    handle(httpRequest: HttpRequest): HttpResponse {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
             const CamposObrigatorios = ["nome", "email", "senha", "confirmSenha"];
             for (const campos of CamposObrigatorios) {
@@ -31,13 +31,12 @@ export class SignupController implements Controllers {
                 return BadRequest(new InvalidParamError("confirmSenha"));
             }
 
-            this.addAccount.add({
+            const account = await this.addAccount.add({
                 nome,
                 email,
                 senha
             });
-
-            return Sucesso();
+            return Sucesso(account);
         } catch (error) {
             return serverError();
         }
