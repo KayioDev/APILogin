@@ -4,6 +4,7 @@ import { EmailValidator } from "../Presentation/Protocolos/emailValidator";
 import { AccountModel } from "../Domin/Models/add-account";
 import { AddAccount } from "../Domin/Usecases/add-account";
 import { AddAccountModel } from "../Domin/Usecases/add-account";
+import { error } from "console";
 
 
 
@@ -218,6 +219,29 @@ describe ('SignupController', ()=>{
         });
 
     })
+
+    test('Garantir que retorne 400 se não for informado um email valido', ()=>{
+        const {sut, addAccountStub} = MakeSut();
+        jest.spyOn(addAccountStub, 'add').mockImplementationOnce(()=> {
+            throw new Error();
+        })
+        const httpRequest = 
+        {
+            body: 
+            {
+                nome: 'any_nome',
+                email: 'invalid_email',
+                senha: 'any_senha',
+                confirmSenha: 'any_confirmSenha'
+            }
+        }
+        const httResponse = sut.handle(httpRequest);
+        expect(httResponse.statusCode).toBe(400);
+        expect(httResponse.body).toEqual(new InvalidError('email'))
+    })
+
+
+    
 
 
 })
