@@ -37,6 +37,7 @@ describe ('DbAddAccount Usecases', ()=> {
     })
     test ('Quarantir que throw se encrypter throws', async () =>{
         const {encriptyStub, sut} = makeSut()
+    
         jest.spyOn(encriptyStub, 'encrypt').mockReturnValueOnce(Promise.reject(new Error()))
         const accountData = {
             nome:'nome_valido',
