@@ -1,11 +1,10 @@
-import { SignupController } from "../Presentation/Controllers/SignUp";
+import { SignupController } from "../Presentation/Controller/SignUp";
 import { Errors, InvalidError, ServerError, InvalidParamError } from "../Presentation/Errors";
 import { EmailValidator } from "../Presentation/Protocolos/emailValidator";
-import { AccountModel } from "../Domin/Models/add-account";
-import { AddAccount } from "../Domin/Usecases/add-account";
-import { AddAccountModel } from "../Domin/Usecases/add-account";
-import { resolve } from "path";
-import { rejects } from "assert";
+import { AccountModel } from "../Domain/Models/add-account";
+import { AddAccount } from "../Domain/Usecases/add-account";
+import { AddAccountModel } from "../Domain/Usecases/add-account";
+
 
 
 
@@ -33,14 +32,6 @@ const MakeEmailValidator = (): EmailValidator =>  {
         return new EmailValidatorStub();
 }
 
-const MakeEmailValidatorWithTrhow= (): EmailValidator => {
-    class EmailValidatorStub implements EmailValidator {
-        isValid(email: string) : boolean {
-            throw new Error();
-        }
-    }
-        return new EmailValidatorStub();
-    }
 
 interface SutTypes {
     sut: SignupController
