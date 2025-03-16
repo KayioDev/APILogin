@@ -1,24 +1,44 @@
-import { Encrypter } from "../Data/Protocol/encrypter";
 import { DbAddAccount } from "../Data/Usecases/db-add-account";
+import { Encrypter, AddAccountModel, AccountModel } from "../Data/Usecases/db-add-accounbt-protocols";
+import { AddAccountRepository } from "../Data/Protocol/add-account-repository";
 interface SutTypes {
     sut: DbAddAccount,
     encriptyStub: Encrypter
+    addAccountReposityStub: AddAccountRepository
 }
 
 const makeEncrypter = ():Encrypter =>{
     class EncriptStub implements Encrypter {
         async encrypt (valor: string): Promise<string> {
-            return new Promise(resolve => resolve('hashed_value'));
+            return new Promise(resolve => resolve('hashed_senha'));
         }
     }
     return new EncriptStub;
 }
+
+const makeAddAccountRepository = (): AddAccountRepository =>{
+    class AddAccountRepositoryStub implements AddAccountRepository {
+       add(account: AddAccountModel): Promise<AccountModel> {
+        const fakeAccount = {
+            id: 'id_valido',
+            nome:'nome_valido',
+            email:'email_valido',
+            senha:'senha_valida'
+        }
+            return new Promise(resolve => resolve(fakeAccount));
+        }
+    }
+    return new AddAccountRepositoryStub;
+}
+
 const makeSut = ():SutTypes => {
+    const addAccountReposityStub = makeAddAccountRepository()
     const encriptyStub = makeEncrypter();
-    const sut = new DbAddAccount(encriptyStub);
+    const sut = new DbAddAccount(encriptyStub, addAccountReposityStub);
     return {
         sut,
-        encriptyStub
+        encriptyStub,
+        addAccountReposityStub
     }
 }
 
@@ -35,16 +55,32 @@ describe ('DbAddAccount Usecases', ()=> {
         await sut.add(accountData);
         expect(encriptSpy).toHaveBeenCalledWith('senha_valida')
     })
-    test ('Quarantir que throw se encrypter throws', async () =>{
-        const {encriptyStub, sut} = makeSut()
     
+    test ('Quarantir que throws se encrypter throws', async () =>{
+        const {encriptyStub, sut} = makeSut()
         jest.spyOn(encriptyStub, 'encrypt').mockReturnValueOnce(Promise.reject(new Error()))
         const accountData = {
             nome:'nome_valido',
             email:'email_valido',
             senha:'senha_valida'
         }
-        const account = sut.add(accountData);
-        await expect(account).rejects.toThrow()
+         const promise = sut.add(accountData);
+         await expect(promise).rejects.toThrow()
+    })
+    
+    test ('Quarantir que seja chamado addAccountRepository se todos os valores forem validos', async () =>{
+        const { sut, addAccountReposityStub} = makeSut()
+        const addSpy = jest.spyOn(addAccountReposityStub, 'add')
+        const accountData = {
+            nome:'nome_valido',
+            email:'email_valido',
+            senha:'senha_valida'
+        }
+        await sut.add(accountData);
+         expect(addSpy).toHaveBeenCalledWith({
+            nome:'nome_valido',
+            email:'email_valido',
+            senha:'hashed_senha'
+         })
     })
 })
